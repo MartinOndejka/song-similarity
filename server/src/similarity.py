@@ -1,16 +1,20 @@
 from dtw import dtw
 from .descriptors_extractor import extract_descriptors
 from .db import songs
+from .dtw import dtw_distance
 
 
-def find_most_sample(file_path):
+def find_best_sample(file_path, dtw_implementation="dtw-python"):
     record_descriptors = extract_descriptors(file_path)
-    print(record_descriptors.shape)
 
     distances = {}
 
     for song, ref_descriptors in songs.items():
-        distance = dtw(ref_descriptors.T, record_descriptors.T).normalizedDistance
+        match dtw_implementation:
+            case "custom":
+                distance = dtw_distance(ref_descriptors.T, record_descriptors.T)
+            case _:
+                distance = dtw(ref_descriptors.T, record_descriptors.T).normalizedDistance
 
         distances[song] = distance  
 

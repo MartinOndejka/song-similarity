@@ -4,13 +4,17 @@ const RECORDING_LENGTH = 10_000;
 
 const App = () => {
   const [isRecording, setIsRecording] = useState(false);
-  const [searchResult, setSearchResult] = useState<string | null>(null);
+  const [searchResult, setSearchResult] = useState<string>("");
+  const [dtwImplementation, setDtwImplementation] = useState<string>("dtw-python");
   const recorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
+  const onRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => setDtwImplementation(e.target.value);
+
   const startRecording = useCallback(async () => {
     setIsRecording(true);
+    setSearchResult("");
 
     if (!navigator.mediaDevices) {
       console.error("recording not supported");
@@ -32,7 +36,7 @@ const App = () => {
 
       form.append("file", file);
 
-      const result = await fetch("/api/find", {
+      const result = await fetch(`/api/find?dtw=${dtwImplementation}`, {
         method: "POST",
         body: form,
       });
@@ -49,11 +53,19 @@ const App = () => {
       recorderRef.current?.stop();
       setIsRecording(false);
     }, RECORDING_LENGTH);
-  }, []);
+  }, [dtwImplementation]);
 
   return (
     <>
       <button onClick={startRecording}></button>
+      <div className="dtw-options">
+        <div>
+          <input type="radio" value="custom" name="dtw" onChange={onRadioChange} /> custom
+        </div>
+        <div>
+          <input type="radio" value="dtw-python" name="dtw" onChange={onRadioChange} /> dtw-python
+        </div>
+      </div>
       <div className="progress-bar">
         <div
           className={`progress-bar-fill ${isRecording && "active"}`}

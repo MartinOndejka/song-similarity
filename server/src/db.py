@@ -15,7 +15,7 @@ def load_songs():
         descriptors = extract_descriptors(file_name)
 
         i = 0
-        while i < descriptors.shape[1]:
+        while i < descriptors.shape[1] - step:
             songs[f"{song}_{i}"] = descriptors[:, i:i+step]
             i += int(step / 4)
     

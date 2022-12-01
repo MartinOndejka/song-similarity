@@ -29,6 +29,10 @@ button {
   border-radius: 50%;
 }
 
+.dtw-options {
+  margin-top: 10px;
+}
+
 .progress-bar {
   position: relative;
   margin-top: 15px;
